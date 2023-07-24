@@ -7,9 +7,9 @@ const http = httpRouter();
 http.route({
   path: "/stripe",
   method: "POST",
-  handler: httpAction(async ({ runAction }, request) => {
+  handler: httpAction(async (ctx, request) => {
     const signature: string = request.headers.get("stripe-signature") as string;
-    const result = await runAction(internal.stripe.fulfill, {
+    const result = await ctx.runAction(internal.stripe.fulfill, {
       signature,
       payload: await request.text(),
     });

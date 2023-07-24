@@ -1,39 +1,37 @@
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
 import { internalMutation, query } from "./_generated/server";
 
 export const getMessageId = query({
   args: { paymentId: v.optional(v.id("payments")) },
-  handler: async ({ db }, { paymentId }) => {
+  handler: async (ctx, { paymentId }) => {
     if (paymentId === undefined) {
       return null;
     }
-    return (await db.get(paymentId))?.messageId;
+    return (await ctx.db.get(paymentId))?.messageId;
   },
 });
 
-export const create = internalMutation(
-  async ({ db }, { text }: { text: string }) => {
-    return await db.insert("payments", { text });
-  }
-);
+export const create = internalMutation({
+  handler: async (ctx, { text }: { text: string }) => {
+    return await ctx.db.insert("payments", { text });
+  },
+});
 
-export const markPending = internalMutation(
-  async (
-    { db },
-    { paymentId, stripeId }: { paymentId: Id<"payments">; stripeId: string }
-  ) => {
-    await db.patch(paymentId, { stripeId });
-  }
-);
+export const markPending = internalMutation({
+  args: { paymentId: v.id("payments"), stripeId: v.string() },
+  handler: async (ctx, { paymentId, stripeId }) => {
+    await ctx.db.patch(paymentId, { stripeId });
+  },
+});
 
-export const fulfill = internalMutation(
-  async ({ db }, { stripeId }: { stripeId: string }) => {
-    const { _id: paymentId, text } = (await db
+export const fulfill = internalMutation({
+  args: { stripeId: v.string() },
+  handler: async (ctx, { stripeId }) => {
+    const { _id: paymentId, text } = (await ctx.db
       .query("payments")
       .withIndex("stripeId", (q) => q.eq("stripeId", stripeId))
       .unique())!;
-    const messageId = await db.insert("messages", { text });
-    await db.patch(paymentId, { messageId });
-  }
-);
+    const messageId = await ctx.db.insert("messages", { text });
+    await ctx.db.patch(paymentId, { messageId });
+  },
+});

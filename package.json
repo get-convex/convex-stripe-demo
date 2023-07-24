@@ -6,7 +6,7 @@
     "build": "vite build",
     "dev:backend": "convex dev",
     "dev:frontend": "vite --open --clearScreen false",
-    "dev:init": "convex dev --once"
+    "dev:init": "convex dev --until-success"
   },
   "dependencies": {
     "convex": "^1.0.2",

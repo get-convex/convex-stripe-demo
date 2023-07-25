@@ -1,7 +1,5 @@
-"use node";
-
 import { v } from "convex/values";
-import { action, internalAction } from "./_generated/server";
+import { action, httpAction } from "./_generated/server";
 import Stripe from "stripe";
 import { internal } from "./_generated/api";
 
@@ -41,28 +39,30 @@ export const pay = action({
   },
 });
 
-export const fulfill = internalAction({
-  args: { signature: v.string(), payload: v.string() },
-  handler: async ({ runMutation }, { signature, payload }) => {
-    const stripe = new Stripe(process.env.STRIPE_KEY!, {
-      apiVersion: "2022-11-15",
-    });
-
-    const webhookSecret = process.env.STRIPE_WEBHOOKS_SECRET as string;
-    try {
-      const event = stripe.webhooks.constructEvent(
-        payload,
-        signature,
-        webhookSecret
-      );
-      if (event.type === "checkout.session.completed") {
-        const stripeId = (event.data.object as { id: string }).id;
-        await runMutation(internal.payments.fulfill, { stripeId });
-      }
-      return { success: true };
-    } catch (err) {
-      console.error(err);
-      return { success: false, error: (err as { message: string }).message };
+export const handleWebhook = httpAction(async (ctx, request) => {
+  const signature: string = request.headers.get("stripe-signature") as string;
+  const payload = await request.text();
+  const stripe = new Stripe(process.env.STRIPE_KEY!, {
+    apiVersion: "2022-11-15",
+  });
+  const webhookSecret = process.env.STRIPE_WEBHOOKS_SECRET as string;
+  try {
+    const event = stripe.webhooks.constructEvent(
+      payload,
+      signature,
+      webhookSecret
+    );
+    if (event.type === "checkout.session.completed") {
+      const stripeId = (event.data.object as { id: string }).id;
+      await ctx.runMutation(internal.payments.fulfill, { stripeId });
     }
-  },
+    return new Response(null, {
+      status: 200,
+    });
+  } catch (err) {
+    console.error(err);
+    return new Response("Webhook Error", {
+      status: 400,
+    });
+  }
 });

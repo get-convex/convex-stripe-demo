@@ -10,6 +10,8 @@ Features:
 
 This integration works! You can see a production deployment at this live site: https://xixixao.github.io/paymorebeseen/.
 
+Read a deep dive into this repo in [Wake up, you need to make money! (ft. Stripe)](https://stack.convex.dev/stripe-with-convex) on Stack.
+
 ## Setting up
 
 Run:

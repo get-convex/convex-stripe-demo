@@ -36,7 +36,12 @@ stripe listen --forward-to <insert your HTTP Actions URL>/stripe
 ```
 
 5. Copy the "Your webhook signing secret" from the output of the `listen` command, and set it as `STRIPE_WEBHOOKS_SECRET` environment variable on your Convex dashboard
-6. Copy your test secret API key from the code example on https://stripe.com/docs/checkout/quickstart and set it as `STRIPE_KEY` environment variable on your Convex dashboard
+6. Copy your test secret API key from the code example on https://stripe.com/docs/checkout/quickstart and set it as `STRIPE_KEY` environment variable on your Convex dashboard or via the CLI:
+
+  ```sh
+  npx convex env set STRIPE_KEY <value>
+  ```
+
 
 You can then use the test credit card details to go through the payment flow, see https://stripe.com/docs/checkout/quickstart#testing
 

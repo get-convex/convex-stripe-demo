@@ -27,14 +27,25 @@ To test the payments flow, follow these steps:
 
 1. Sign up for Stripe for free at https://stripe.com/
 2. [Install the stripe CLI](https://stripe.com/docs/stripe-cli)
-3. Run
+3. Get your HTTP Actions URL from the Convex dashboard (Settings -> URL & Deploy Key -> Show development credentials).
+This should looks something like https://happy-dog-123.convex.site
+4. Run
 
 ```
-stripe listen --forward-to localhost:5173/stripe
+stripe listen --forward-to <insert your HTTP Actions URL>/stripe
 ```
 
-4. Copy the "Your webhook signing secret" from the output of the `listen` command, and set it as `STRIPE_WEBHOOKS_SECRET` environment variable on your Convex dashboard
-5. Copy your test secret API key from the code example on https://stripe.com/docs/checkout/quickstart and set it as `STRIPE_KEY` environment variable on your Convex dashboard
+5. Copy the "Your webhook signing secret" from the output of the `listen` command, and set it as `STRIPE_WEBHOOKS_SECRET` environment variable on your Convex dashboard or via the CLI:
+
+  ```sh
+  npx convex env set STRIPE_WEBHOOKS_SECRET <secret>
+  ```
+6. Copy your test secret API key from the code example on https://stripe.com/docs/checkout/quickstart and set it as `STRIPE_KEY` environment variable on your Convex dashboard or via the CLI:
+
+  ```sh
+  npx convex env set STRIPE_KEY <value>
+  ```
+
 
 You can then use the test credit card details to go through the payment flow, see https://stripe.com/docs/checkout/quickstart#testing
 

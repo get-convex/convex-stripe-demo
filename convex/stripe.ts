@@ -1,5 +1,3 @@
-"use node";
-
 import { v } from "convex/values";
 import { action, internalAction } from "./_generated/server";
 import Stripe from "stripe";
@@ -50,7 +48,7 @@ export const fulfill = internalAction({
 
     const webhookSecret = process.env.STRIPE_WEBHOOKS_SECRET as string;
     try {
-      const event = stripe.webhooks.constructEvent(
+      const event = await stripe.webhooks.constructEventAsync(
         payload,
         signature,
         webhookSecret

@@ -35,7 +35,11 @@ This should looks something like https://happy-dog-123.convex.site
 stripe listen --forward-to <insert your HTTP Actions URL>/stripe
 ```
 
-5. Copy the "Your webhook signing secret" from the output of the `listen` command, and set it as `STRIPE_WEBHOOKS_SECRET` environment variable on your Convex dashboard
+5. Copy the "Your webhook signing secret" from the output of the `listen` command, and set it as `STRIPE_WEBHOOKS_SECRET` environment variable on your Convex dashboard or via the CLI:
+
+  ```sh
+  npx convex env set STRIPE_WEBHOOKS_SECRET <secret>
+  ```
 6. Copy your test secret API key from the code example on https://stripe.com/docs/checkout/quickstart and set it as `STRIPE_KEY` environment variable on your Convex dashboard or via the CLI:
 
   ```sh
